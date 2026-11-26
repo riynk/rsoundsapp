@@ -36,11 +36,11 @@ This is an early engineering foundation, not yet a finished music player. Local 
 | Lyrics | RSounds models, Enhanced-LRC and Lyricsfile parser |
 | Build | Gradle Kotlin DSL |
 | Minimum Android | Android 8.0 (API 26), subject to feature-specific support |
-| Compile SDK | Android 17 API 37 preview |
+| Compile SDK | Android 17 API 37.1 preview |
 | Target SDK | Android 16 API 36 until Android 17 is stable |
 
 ## Build
-Requirements: JDK 17, Android SDK Platform 37 preview and Build Tools 37.0.0.
+Requirements: JDK 17, Android SDK Platform 37.1 preview and Build Tools 37.0.0.
 
 ```bash
 ./gradlew testDebugUnitTest
