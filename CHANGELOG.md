@@ -1,11 +1,17 @@
 # Changelog
 
-All notable changes to RSounds will be documented here.
+All notable changes to RSounds are recorded here.
 
-The project is in its early setup stage. Versions will follow a release strategy once the first usable builds are available.
+## Unreleased — 2026-11-26
 
-## Unreleased
+### Added
+- Initial Android Gradle project and Jetpack Compose application shell.
+- Media3 ExoPlayer and MediaSessionService lifecycle boundary.
+- Lyrics models and enhanced-LRC parsing with millisecond timestamps.
+- Bounded safe LRCLIB Lyricsfile YAML parser adapted from PixelMusic with provenance.
+- Tests for word timing, line fallback, offsets and malformed input.
+- GitHub Actions workflow for Android tests and debug APK assembly.
+- Technical audit, architecture, provenance and roadmap documents.
 
-- Added initial project overview and development direction.
-- Added Android-focused Git ignore rules.
-- Added contribution guidelines.
+### Notes
+- This establishes the build foundation. Local scanning, online providers and a complete player UI are not yet implemented.

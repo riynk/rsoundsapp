@@ -1,50 +1,96 @@
 # RSounds Architecture
 
-## Goals
+**Product model:** hybrid local + authorized online music, with a deep synchronized-lyrics experience.
 
-RSounds is planned as a modular Android application. Core playback and data capabilities should remain independent from individual screens and online providers.
+## Engineering principles
 
-## Proposed layers
+- Reuse, repair, refactor, integrate. Evaluate upstream code as a component, not a wholesale application import.
+- Keep playback, lyrics, metadata, storage and provider adapters behind stable contracts.
+- A provider failure must not break local playback or the lyrics engine.
+- Preserve upstream copyright, license texts and provenance for every reused component.
+- Prefer official APIs, SDKs or explicitly permitted protocols.
 
-### app
-Application entry point, dependency wiring, navigation host, and lifecycle integration.
+## Current module graph
 
-### core/player
-Playback abstractions, queue management, audio focus, media session, and AndroidX Media3 integration.
+```text
+:app
+ ├── :core:player
+ └── :core:lyrics
 
-### core/lyrics
-Lyric models, parsing, time synchronization, offset adjustment, and source interfaces.
+Future modules:
+ :core:model
+ :core:database
+ :core:network
+ :core:metadata
+ :core:designsystem
+ :provider:local
+ :provider:lrclib
+ :provider:navidrome
+ :provider:jellyfin
+ :provider:youtube
+ :feature:home
+ :feature:library
+ :feature:search
+ :feature:player
+ :feature:lyrics
+ :feature:settings
+ :feature:automotive
+```
 
-### core/network
-Shared networking primitives, error handling, and provider-facing infrastructure. Provider-specific terms and authentication requirements must be respected.
+The initial implementation is a modular monolith. Split modules further only when build time, ownership or test boundaries justify the cost.
 
-### core/design
-Typography, color tokens, shapes, reusable components, motion guidelines, and the circular RSounds identity.
+## Runtime boundaries
 
-### features
-User-facing capabilities such as home, library, search, lyrics, and settings. Feature modules should depend on core abstractions rather than each other where practical.
+### Playback
+- AndroidX Media3 ExoPlayer is the initial playback engine.
+- `RsoundsPlaybackService` owns ExoPlayer and MediaSession lifecycle.
+- Queue policy, source resolution, persistence, effects and UI controllers are separate integration tasks.
+- Local files and permitted music-server sources share one internal playback model.
 
-### automotive/android-auto
-Car-compatible media browsing and playback integration using supported Android for Cars APIs and templates. The implementation must comply with platform driver-distraction requirements.
+### Lyrics
+- Domain timestamps are integer milliseconds.
+- Enhanced-LRC parsing supports line and word timestamps, metadata, offsets and repeated line timestamps.
+- LRCLIB Lyricsfile YAML uses SnakeYAML's safe constructor, schema-version checks and input/collection limits.
+- Word sync is preferred; line sync is fallback; plain text is last fallback when no timing is supplied.
+- Never fabricate word timing from line timing.
 
-## Provider integration
+### Providers
+Each provider must document permitted API/protocol use, authentication, attribution, rate limits, regions, cache rules, content rights and failure behavior.
 
-Online music and lyric services should be isolated behind interfaces. Each provider module must document:
+Initial candidates:
+- Android MediaStore / Storage Access Framework.
+- LRCLIB for lyrics, subject to API usage policy and polite rate-limit handling.
+- User-owned Navidrome or Jellyfin servers through supported protocols.
+- YouTube official APIs/player flows for discovery and user-initiated playback within current policies.
 
-- Its official API or SDK and permitted use.
-- Authentication and token-storage requirements.
-- Rate limits and attribution requirements.
-- Content availability and regional restrictions.
-- Applicable license and terms of service.
+### YouTube boundary
+Do not implement audio-only extraction, background playback, offline copies, ad blocking or other behavior that bypasses YouTube restrictions. Identify YouTube content and keep search results separated where platform policies require it.
 
-No provider integration should scrape private endpoints, bypass access controls, or redistribute protected content without authorization.
+## Module contracts
+- `core:player`: playback service and Media3-facing interfaces.
+- `core:lyrics`: parsing, normalized models, timeline selection and offset transformations.
+- `provider:*`: translate provider data into RSounds domain models; provider code does not leak into UI.
+- `feature:*`: UI and user interaction; no direct HTTP or database calls.
+- `app`: composition root and navigation.
 
-## Initial implementation sequence
+## Planned data model
+- `TrackId`: internal stable identifier, independent of provider IDs.
+- `Track`: title, artists, album, duration, recording IDs and version tags.
+- `TrackSource`: source, URI, availability and permitted actions.
+- `LyricsDocument`: language, source, sync level, metadata, offset and revision.
+- `LyricLine` / `LyricWord`: exact text and start/end milliseconds.
+- `Playlist`, `QueueItem`, `PlaybackHistory`, `ArtworkRef`.
 
-1. Establish the Gradle Android project and application module.
-2. Add a minimal Compose shell and design tokens.
-3. Integrate Media3 for local playback.
-4. Add media-library indexing and permissions.
-5. Introduce lyric source abstractions and synchronized display.
-6. Add authorized online-provider integrations.
-7. Implement Android Auto support and validate it against platform requirements.
+Track matching must consider title, primary artist, duration tolerance, album/version and recording ID when available. Title-only matching is insufficient for remixes, live versions or same-name songs.
+
+## Android platform
+- Background playback uses a foreground media-playback service and MediaSession.
+- Request media and notification permissions only when the corresponding feature is first used.
+- Android Auto / Android for Cars is a later feature and must follow current platform requirements.
+
+## Testing strategy
+- Unit tests: timestamps, word/line fallback, offsets and invalid YAML.
+- Provider contract tests with fixtures; not only live services.
+- Playback tests: queue transitions, audio focus, service recreation and noisy-output events.
+- Instrumentation tests: permissions, MediaStore scanning, notifications and car integration.
+- CI must run unit tests and build a debug APK before merge.
