@@ -12,13 +12,17 @@ data class LyricsDocument(
         get() = when {
             lines.isEmpty() -> LyricsSyncLevel.NONE
             lines.any { it.words.isNotEmpty() } -> LyricsSyncLevel.WORD
-            lines.any { it.startMs >= 0L } -> LyricsSyncLevel.LINE
+            lines.any { it.startMs != null } -> LyricsSyncLevel.LINE
             else -> LyricsSyncLevel.PLAIN
         }
 }
 
+/**
+ * A null startMs means that the line is readable text without a supplied timestamp.
+ * Do not synthesize a timestamp for plain lyrics.
+ */
 data class LyricLine(
-    val startMs: Long,
+    val startMs: Long?,
     val text: String,
     val words: List<LyricWord> = emptyList(),
     val endMs: Long? = null

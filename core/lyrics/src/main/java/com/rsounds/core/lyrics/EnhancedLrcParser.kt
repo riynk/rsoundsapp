@@ -52,15 +52,15 @@ object EnhancedLrcParser {
         }
 
         if (parsedLines.isEmpty()) return null
-        val ordered = parsedLines.sortedBy { it.startMs }.mapIndexed { index, line ->
-            val nextLineStart = parsedLines.asSequence()
-                .map { it.startMs }
-                .filter { it > line.startMs }
-                .minOrNull()
+        val timestampedStarts = parsedLines.mapNotNull { it.startMs }.distinct().sorted()
+        val ordered = parsedLines.sortedBy { it.startMs ?: Long.MAX_VALUE }.map { line ->
+            val nextLineStart = line.startMs?.let { start ->
+                timestampedStarts.firstOrNull { it > start }
+            }
             val wordsWithEnds = line.words.mapIndexed { wordIndex, word ->
                 word.copy(endMs = word.endMs ?: line.words.getOrNull(wordIndex + 1)?.startMs)
             }
-            line.copy(words = wordsWithEnds, endMs = nextLineStart)
+            line.copy(words = wordsWithEnds, endMs = line.endMs ?: nextLineStart)
         }
         return LyricsDocument(
             lines = ordered,
