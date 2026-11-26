@@ -2,10 +2,19 @@
 
 **Audit date:** 2026-11-26  
 **Scope:** repository state, selected source projects, licensing/provenance and initial platform architecture.  
-**Status:** preliminary code-structure and source-document review; not a complete security or build audit.
+**Status:** preliminary code-structure and source-document review; initial CI build verified; not a complete security or device audit.
 
 ## RSounds baseline
-At audit start, `RY-DEV` contained documentation and a GPL-3.0-only license, but no Android Gradle project, manifest, Kotlin source or automated build. The first implementation commit establishes a minimal Android project and two core modules.
+At audit start, `RY-DEV` contained documentation and a GPL-3.0-only license, but no Android Gradle project, manifest, Kotlin source or automated build. The initial implementation created the Android project and two core modules.
+
+## CI verification
+- **Verified commit:** `8f47ffabf6eab6e112b55ec1d2616b0615abfc19`
+- **Workflow:** Android CI
+- **Run:** https://github.com/riynk/rsoundsapp/actions/runs/45831770725
+- **Result:** GitHub Actions completed successfully.
+- **Tasks:** `testDebugUnitTest` and `assembleDebug`.
+- This verifies Gradle configuration, compilation, the current lyrics unit tests, and debug APK assembly on the hosted runner.
+- It does not verify runtime playback on a physical device, permissions, audio focus, streaming-provider access, Android Auto, security posture, or production release signing.
 
 ## Candidate review
 
@@ -71,11 +80,11 @@ The adapted Lyricsfile parser is recorded in `docs/PROVENANCE.md`.
 | Android background restrictions | Medium | MediaSessionService and platform tests |
 
 ## Audit limitations
-No full source checkout, Gradle dependency resolution, APK inspection, SAST, secret scan, license scan, instrumentation test or device playback test was performed. CI is added with this implementation; its result must be checked separately.
+No full source checkout, dependency-license scan, APK inspection, SAST, secret scan, instrumentation test or physical-device playback test was performed. The successful hosted build does not substitute for those checks.
 
 ## Next audit gates
-1. Resolve CI compile/test findings.
-2. Inspect source histories for every proposed import.
-3. Create a dependency SBOM and automated license report.
-4. Add local MediaStore scanner and playback-controller tests.
-5. Review provider API contracts and terms before implementation.
+1. Inspect source histories for every proposed import.
+2. Create a dependency SBOM and automated license report.
+3. Add local MediaStore scanner and playback-controller tests.
+4. Review provider API contracts and terms before implementation.
+5. Run permissions, audio focus, notification and physical-device playback tests.
