@@ -80,7 +80,7 @@ Contributions, issue reports, and thoughtful feature proposals are welcome. Plea
 
 ## Legal and third-party services
 
-- Original RSounds code is distributed under the repository's Apache License 2.0.
+- RSounds project code is distributed under the GNU General Public License v3.0 only (GPL-3.0-only), unless a file or component states otherwise.
 - Third-party libraries, APIs, artwork, and service integrations remain subject to their own licenses and terms.
 - Online music and lyrics integrations must use authorized APIs, SDKs, or other permitted access methods.
 - RSounds will not bundle proprietary applications, bypass subscriptions or access controls, or redistribute copyrighted catalogs without permission.
