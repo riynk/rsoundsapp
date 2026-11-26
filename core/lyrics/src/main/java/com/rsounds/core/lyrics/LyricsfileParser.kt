@@ -15,7 +15,7 @@ import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor
 
 /** Converts LRCLIB Lyricsfile YAML into enhanced LRC with bounded safe parsing. */
-internal object LyricsfileParser {
+object LyricsfileParser {
     private const val MAX_LYRICSFILE_CODE_POINTS = 1_000_000
     private const val MAX_LINES = 10_000
     private const val MAX_WORDS_PER_LINE = 2_000
@@ -36,6 +36,11 @@ internal object LyricsfileParser {
         if (root["version"]?.toString() != "1.0") return null
         val lines = (root["lines"] as? List<*>)?.take(MAX_LINES).orEmpty()
         return lines.mapNotNull(::parseLine).takeIf { it.isNotEmpty() }?.joinToString("\n")
+    }
+
+    /** Parses Lyricsfile directly into RSounds' normalized lyrics model. */
+    fun parseDocument(rawLyricsfile: String?, source: String = "lrclib"): LyricsDocument? {
+        return EnhancedLrcParser.parse(toEnhancedLrc(rawLyricsfile), source)
     }
 
     private fun parseLine(rawLine: Any?): String? {

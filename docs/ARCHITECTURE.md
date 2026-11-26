@@ -16,13 +16,15 @@
  ├── :core:lyrics
  └── :provider:local
 
+Provider modules:
+ :provider:lrclib
+
 Future modules:
  :core:model
  :core:database
  :core:network
  :core:metadata
  :core:designsystem
- :provider:lrclib
  :provider:navidrome
  :provider:jellyfin
  :provider:youtube
@@ -59,14 +61,19 @@ The initial implementation is a modular monolith. Split modules further only whe
 - `PlainLyricsParser` preserves readable line breaks but does not fabricate timestamps.
 - `LyricsTimeline` resolves the active line/word from the real playback position, respects line/word end boundaries, and applies signed user correction with overflow-safe arithmetic.
 - LRCLIB Lyricsfile YAML uses SnakeYAML's safe constructor, schema-version checks and input/collection limits.
-- Word sync is preferred; line sync is fallback; plain text is last fallback when no timing is supplied.
 
-### Providers
+### LRCLIB provider
+- `:provider:lrclib` uses the stable `GET /api/get` signature endpoint.
+- Requests include an identifying RSounds User-Agent, are serialized through a mutex and paced at a minimum 300 ms interval.
+- HTTP 429/503 responses establish a cooldown from `Retry-After` plus up to 30% jitter; the next lookup waits before sending another request.
+- Responses prefer word-synced Lyricsfile when advertised, fall back to line-synced LRC, then plain text.
+- A signature-match report compares normalized title and artist and checks the ±2-second duration window; callers should not silently use weak matches.
+- No API key is embedded. Do not batch-scan a whole library without respecting service limits and caching.
+
+### Other providers
 Each provider must document permitted API/protocol use, authentication, attribution, rate limits, regions, cache rules, content rights and failure behavior.
 
 Initial candidates:
-- Android MediaStore / Storage Access Framework.
-- LRCLIB for lyrics, subject to API usage policy and polite rate-limit handling.
 - User-owned Navidrome or Jellyfin servers through supported protocols.
 - YouTube official APIs/player flows for discovery and user-initiated playback within current policies.
 
@@ -77,6 +84,7 @@ Do not implement audio-only extraction, background playback, offline copies, ad 
 - `core:player`: playback service and Media3-facing interfaces.
 - `core:lyrics`: parsing, normalized models, timeline selection and offset transformations.
 - `provider:local`: read-only MediaStore scan and platform content URI mapping.
+- `provider:lrclib`: API DTOs, transport, matching, cooldown and lyrics normalization.
 - `provider:*`: translate provider data into RSounds domain models; provider code does not leak into UI.
 - `feature:*`: UI and user interaction; no direct HTTP or database calls.
 - `app`: composition root, permissions, controller connection and navigation.
@@ -100,7 +108,7 @@ Track matching must consider title, primary artist, duration tolerance, album/ve
 
 ## Testing strategy
 - Unit tests: timestamps, word/line/plain fallback, offsets, line/word boundaries, gaps and invalid YAML.
-- Provider contract tests with fixtures; not only live services.
+- Provider tests: word/line/plain priority, instrumentals, not-found, User-Agent, URL encoding, and rate-limit cooldown.
 - Playback tests: queue transitions, audio focus, service recreation and noisy-output events.
 - Instrumentation tests: permissions, MediaStore scanning, notifications and car integration.
 - CI must run unit tests and build a debug APK before merge.
