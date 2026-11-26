@@ -64,7 +64,7 @@ The initial implementation is a modular monolith. Split modules further only whe
 
 ### LRCLIB provider
 - `:provider:lrclib` uses the stable `GET /api/get` signature endpoint.
-- Requests include an identifying RSounds User-Agent, are serialized through a mutex and paced at a minimum 300 ms interval.
+- Requests include an identifying RSounds User-Agent, are serialized through a mutex and paced at a minimum 750 ms interval to stay below 90 requests/minute.
 - HTTP 429/503 responses establish a cooldown from `Retry-After` plus up to 30% jitter; the next lookup waits before sending another request.
 - Responses prefer word-synced Lyricsfile when advertised, fall back to line-synced LRC, then plain text.
 - A signature-match report compares normalized title and artist and checks the ±2-second duration window; callers should not silently use weak matches.

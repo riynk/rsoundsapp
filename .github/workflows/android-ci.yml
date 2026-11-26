@@ -32,6 +32,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
       - name: Run unit tests and assemble
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+      - name: Upload unit test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RSounds-test-reports
+          path: "**/build/test-results/**/*.xml"
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:

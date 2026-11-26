@@ -22,7 +22,7 @@ Sequenced by dependency and risk, not visual feature count.
 - [x] Plain, line and word sync levels with honest fallbacks
 - [x] Playback-position-driven line/word timeline and correction math
 - [x] LRCLIB signature lookup with User-Agent identification
-- [x] Request serialization, 300 ms pacing and Retry-After cooldown
+- [x] Request serialization, 750 ms pacing and Retry-After cooldown
 - [x] Word-sync → line-sync → plain-text fallback
 - [x] Now Playing lyrics panel driven by Media3 playback position
 - [ ] Persist manual offset correction per track

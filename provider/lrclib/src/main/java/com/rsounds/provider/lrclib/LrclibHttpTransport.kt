@@ -7,7 +7,8 @@ import java.net.URL
 data class LrclibHttpResponse(
     val statusCode: Int,
     val body: String,
-    val retryAfter: String? = null
+    val retryAfter: String? = null,
+    val contentType: String? = null
 )
 
 interface LrclibHttpTransport {
@@ -49,7 +50,8 @@ class UrlConnectionLrclibTransport : LrclibHttpTransport {
             return LrclibHttpResponse(
                 statusCode = status,
                 body = body,
-                retryAfter = connection.getHeaderField("Retry-After")
+                retryAfter = connection.getHeaderField("Retry-After"),
+                contentType = connection.getHeaderField("Content-Type")
             )
         } finally {
             connection.disconnect()

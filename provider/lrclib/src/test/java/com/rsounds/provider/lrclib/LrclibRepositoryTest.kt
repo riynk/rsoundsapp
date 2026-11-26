@@ -2,9 +2,12 @@ package com.rsounds.provider.lrclib
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlinx.coroutines.runBlocking
+import com.rsounds.core.lyrics.LyricsfileParser
+import com.rsounds.core.lyrics.LyricsSyncLevel
 
 class LrclibRepositoryTest {
     @Test
@@ -32,7 +35,16 @@ class LrclibRepositoryTest {
 
         assertTrue(result is LrclibLookupResult.Found)
         val found = result as LrclibLookupResult.Found
-        assertEquals("WORD", found.document.syncLevel.name)
+        assertTrue("JSON hasWordSync flag was not decoded", found.record.hasWordSync)
+        assertNotNull("Lyricsfile field was not decoded", found.record.lyricsfile)
+        val parsedLyricsfile = LyricsfileParser.parseDocument(found.record.lyricsfile)
+        assertNotNull("Lyricsfile did not parse", parsedLyricsfile)
+        assertEquals(
+            "Lyricsfile must retain word timestamps",
+            LyricsSyncLevel.WORD,
+            parsedLyricsfile?.syncLevel
+        )
+        assertEquals(LyricsSyncLevel.WORD, found.document.syncLevel)
         assertEquals("lrclib-word-sync", found.document.source)
         assertTrue(found.signatureMatch.isStrong)
     }

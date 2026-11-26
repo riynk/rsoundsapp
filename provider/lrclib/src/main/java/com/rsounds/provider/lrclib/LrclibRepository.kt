@@ -36,7 +36,7 @@ class LrclibRepository(
     private val jitterFor: (Long) -> Long = { maximum ->
         if (maximum <= 0L) 0L else ThreadLocalRandom.current().nextLong(maximum + 1L)
     },
-    private val minRequestIntervalMs: Long = 300L
+    private val minRequestIntervalMs: Long = 750L
 ) {
     private val mutex = Mutex()
     private val gson = Gson()
@@ -73,7 +73,7 @@ class LrclibRepository(
         )
 
         when (response.statusCode) {
-            200 -> parseRecord(response.body, query)
+            200 -> parseRecord(response.body, query, response.contentType)
             404 -> LrclibLookupResult.NotFound
             429 -> {
                 val cooldown = retryDelayMs(response.retryAfter)
@@ -99,8 +99,12 @@ class LrclibRepository(
 
     private fun parseRecord(
         body: String,
-        query: LrclibTrackQuery
+        query: LrclibTrackQuery,
+        contentType: String?
     ): LrclibLookupResult {
+        if (contentType != null && !contentType.contains("json", ignoreCase = true)) {
+            return LrclibLookupResult.InvalidResponse("LRCLIB response was not JSON.")
+        }
         if (body.isBlank()) return LrclibLookupResult.InvalidResponse("LRCLIB returned an empty response.")
         val record = try {
             gson.fromJson(body, LrclibLyricsRecord::class.java)
@@ -129,9 +133,15 @@ class LrclibRepository(
     }
 
     private fun buildLyricsDocument(record: LrclibLyricsRecord): LyricsDocument? {
-        if (record.hasWordSync && !record.lyricsfile.isNullOrBlank()) {
-            LyricsfileParser.parseDocument(record.lyricsfile, source = "lrclib-word-sync")
-                ?.let { return it }
+        // Actual word timestamps are authoritative even if the API flag is stale.
+        if (!record.lyricsfile.isNullOrBlank()) {
+            val wordDocument = LyricsfileParser.parseDocument(
+                record.lyricsfile,
+                source = "lrclib-word-sync"
+            )
+            if (wordDocument?.syncLevel == com.rsounds.core.lyrics.LyricsSyncLevel.WORD) {
+                return wordDocument
+            }
         }
 
         if (!record.syncedLyrics.isNullOrBlank()) {
