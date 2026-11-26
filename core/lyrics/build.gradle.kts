@@ -1,7 +1,11 @@
 plugins { alias(libs.plugins.android.library) }
 android {
     namespace = "com.rsounds.core.lyrics"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
     defaultConfig { minSdk = 26 }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

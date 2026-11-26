@@ -3,7 +3,6 @@
 **Product model:** hybrid local + authorized online music, with a deep synchronized-lyrics experience.
 
 ## Engineering principles
-
 - Reuse, repair, refactor, integrate. Evaluate upstream code as a component, not a wholesale application import.
 - Keep playback, lyrics, metadata, storage and provider adapters behind stable contracts.
 - A provider failure must not break local playback or the lyrics engine.
@@ -11,7 +10,6 @@
 - Prefer official APIs, SDKs or explicitly permitted protocols.
 
 ## Current module graph
-
 ```text
 :app
  ├── :core:player
@@ -84,6 +82,8 @@ Do not implement audio-only extraction, background playback, offline copies, ad 
 Track matching must consider title, primary artist, duration tolerance, album/version and recording ID when available. Title-only matching is insufficient for remixes, live versions or same-name songs.
 
 ## Android platform
+- Compile against Android 17 API 37.1 to satisfy the current stable Compose release.
+- Keep targetSdk at Android 16 API 36 until Android 17 reaches stable release.
 - Background playback uses a foreground media-playback service and MediaSession.
 - Request media and notification permissions only when the corresponding feature is first used.
 - Android Auto / Android for Cars is a later feature and must follow current platform requirements.
