@@ -4,11 +4,7 @@ plugins {
 }
 android {
     namespace = "com.rsounds.app"
-    compileSdk {
-        version = release(37) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
     defaultConfig {
         applicationId = "com.rsounds.app"
         minSdk = 26

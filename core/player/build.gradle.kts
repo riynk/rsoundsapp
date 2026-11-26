@@ -1,11 +1,7 @@
 plugins { alias(libs.plugins.android.library) }
 android {
     namespace = "com.rsounds.core.player"
-    compileSdk {
-        version = release(37) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
     defaultConfig { minSdk = 26 }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

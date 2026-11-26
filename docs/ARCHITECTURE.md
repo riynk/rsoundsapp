@@ -38,7 +38,6 @@ Future modules:
 The initial implementation is a modular monolith. Split modules further only when build time, ownership or test boundaries justify the cost.
 
 ## Runtime boundaries
-
 ### Playback
 - AndroidX Media3 ExoPlayer is the initial playback engine.
 - `RsoundsPlaybackService` owns ExoPlayer and MediaSession lifecycle.
@@ -82,7 +81,7 @@ Do not implement audio-only extraction, background playback, offline copies, ad 
 Track matching must consider title, primary artist, duration tolerance, album/version and recording ID when available. Title-only matching is insufficient for remixes, live versions or same-name songs.
 
 ## Android platform
-- Compile against Android 17 API 37.1 to satisfy the current stable Compose release.
+- Compile against Android 17 API 37 preview to meet the current Jetpack Compose release baseline.
 - Keep targetSdk at Android 16 API 36 until Android 17 reaches stable release.
 - Background playback uses a foreground media-playback service and MediaSession.
 - Request media and notification permissions only when the corresponding feature is first used.
