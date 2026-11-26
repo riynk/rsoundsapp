@@ -16,3 +16,4 @@ rootProject.name = "RSounds"
 include(":app")
 include(":core:player")
 include(":core:lyrics")
+include(":provider:local")

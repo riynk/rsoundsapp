@@ -13,7 +13,8 @@
 ```text
 :app
  ├── :core:player
- └── :core:lyrics
+ ├── :core:lyrics
+ └── :provider:local
 
 Future modules:
  :core:model
@@ -21,7 +22,6 @@ Future modules:
  :core:network
  :core:metadata
  :core:designsystem
- :provider:local
  :provider:lrclib
  :provider:navidrome
  :provider:jellyfin
@@ -38,11 +38,20 @@ Future modules:
 The initial implementation is a modular monolith. Split modules further only when build time, ownership or test boundaries justify the cost.
 
 ## Runtime boundaries
+
+### Local library
+- `:provider:local` reads audio metadata from Android MediaStore through a read-only ContentResolver query.
+- Android 13+ requests `READ_MEDIA_AUDIO`; Android 8–12 requests `READ_EXTERNAL_STORAGE` with a maximum SDK of 32.
+- Audio content is opened through platform content URIs. RSounds does not copy, upload or modify the source files.
+- A Room index and change observer are planned; the current scanner performs an on-demand library query.
+
 ### Playback
 - AndroidX Media3 ExoPlayer is the initial playback engine.
 - `RsoundsPlaybackService` owns ExoPlayer and MediaSession lifecycle.
-- Queue policy, source resolution, persistence, effects and UI controllers are separate integration tasks.
-- Local files and permitted music-server sources share one internal playback model.
+- The app connects through a MediaController and submits MediaStore content URIs as MediaItems.
+- Media3 handles audio focus; the player pauses on noisy audio-output changes.
+- The system media session provides integration points for lock-screen, headset and external controls.
+- Advanced queue persistence, shuffle/repeat, audio effects and device tests remain separate integration tasks.
 
 ### Lyrics
 - Domain timestamps are integer milliseconds.
@@ -66,9 +75,10 @@ Do not implement audio-only extraction, background playback, offline copies, ad 
 ## Module contracts
 - `core:player`: playback service and Media3-facing interfaces.
 - `core:lyrics`: parsing, normalized models, timeline selection and offset transformations.
+- `provider:local`: read-only MediaStore scan and platform content URI mapping.
 - `provider:*`: translate provider data into RSounds domain models; provider code does not leak into UI.
 - `feature:*`: UI and user interaction; no direct HTTP or database calls.
-- `app`: composition root and navigation.
+- `app`: composition root, permissions, controller connection and navigation.
 
 ## Planned data model
 - `TrackId`: internal stable identifier, independent of provider IDs.

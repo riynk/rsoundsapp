@@ -25,10 +25,15 @@ android {
 dependencies {
     implementation(project(":core:player"))
     implementation(project(":core:lyrics"))
+    implementation(project(":provider:local"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
+    implementation(libs.kotlinx.coroutines.android)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

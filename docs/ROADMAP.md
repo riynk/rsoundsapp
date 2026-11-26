@@ -10,14 +10,14 @@ Sequenced by dependency and risk, not visual feature count.
 - [x] Bounded safe Lyricsfile YAML parser
 - [x] Unit-test fixtures for word/line sync, offsets and invalid documents
 - [x] GitHub Actions workflow
-- [ ] Confirm CI result and resolve toolchain issues
+- [x] Hosted unit-test and debug-APK build verification
 
 ## P1 — Local listening
-- [ ] MediaStore scanner and permission flow
-- [ ] Room library and stable track identity
-- [ ] MediaController and real playback controls
-- [ ] Queue, shuffle, repeat, history and favorites
-- [ ] Notification, audio focus, headset and Bluetooth behavior
+- [x] MediaStore audio scanner and runtime permission flow
+- [x] MediaController connection and local playback controls
+- [ ] Room library index and stable track identity
+- [ ] Queue persistence, shuffle, repeat, history and favorites
+- [ ] Notification permission prompt and full audio focus/device matrix
 - [ ] Embedded LRC/TTML/QRC reader and local lyric editor
 
 ## P2 — Deep lyrics
@@ -38,7 +38,7 @@ Sequenced by dependency and risk, not visual feature count.
 - [ ] Artwork, metadata and playlist import where permitted
 
 ## P4 — Premium experience
-- [ ] Now Playing UI and animated lyrics
+- [ ] Now Playing interface and animated lyrics
 - [ ] Equalizer/audio effects where supported
 - [ ] Android Auto / Android for Cars
 - [ ] Personalized discovery and smart playlists
