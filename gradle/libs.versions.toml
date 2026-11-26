@@ -6,7 +6,7 @@ composeBom = "2026.11.01"
 media3 = "1.11.1"
 coroutines = "1.10.2"
 gson = "2.15.0"
-snakeyaml = "2.4"
+snakeyaml = "2.7"
 junit = "4.13.2"
 
 [plugins]
