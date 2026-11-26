@@ -5,9 +5,7 @@ plugins {
 android {
     namespace = "com.rsounds.app"
     compileSdk {
-        version = release(37) {
-            minorApiLevel = 1
-        }
+        version = release(37) { minorApiLevel = 1 }
     }
     defaultConfig {
         applicationId = "com.rsounds.app"
@@ -26,6 +24,7 @@ dependencies {
     implementation(project(":core:player"))
     implementation(project(":core:lyrics"))
     implementation(project(":provider:local"))
+    implementation(project(":provider:lrclib"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation)

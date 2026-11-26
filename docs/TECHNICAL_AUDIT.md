@@ -11,13 +11,17 @@
 - MediaController connection, track list, queue submission and play/pause surface.
 - Enhanced-LRC and Lyricsfile parsing, including word-level timestamp preservation.
 - Plain-text lyrics parsing and playback-position-driven lyrics timeline.
-- Unit tests for parser and timeline boundaries.
+- LRCLIB signature lookup adapter with client identification, serialized requests, pacing and Retry-After cooldown.
+- Now Playing lyrics panel that resolves the active line/word from Media3 playback position.
+- Unit tests for parsers, timeline boundaries, LRCLIB fallbacks and rate limiting.
 - GitHub Actions unit tests, debug APK assembly and artifact publishing.
 
 ### CI evidence
-- Foundation build: https://github.com/riynk/rsoundsapp/actions/runs/45832235322 — success, including artifact upload.
-- Local playback build: https://github.com/riynk/rsoundsapp/actions/runs/45833231266 — success, including unit tests, debug APK assembly and artifact upload.
-- The CI result verifies hosted compilation and the current unit tests. It does not prove runtime behavior on a physical device.
+- Foundation build: https://github.com/riynk/rsoundsapp/actions/runs/45832235322 — success.
+- Local playback build: https://github.com/riynk/rsoundsapp/actions/runs/45833231266 — success.
+- Lyrics timeline build: https://github.com/riynk/rsoundsapp/actions/runs/45834020814 — success.
+- Current CI for the LRCLIB provider/UI integration must be checked before describing that commit as verified.
+- Hosted CI verifies compilation and unit tests, not physical-device playback or external network behavior.
 
 ## Candidate review
 
@@ -66,19 +70,18 @@ The adapted Lyricsfile parser is recorded in `docs/PROVENANCE.md`.
 
 ## Provider and content constraints
 - YouTube integrations must follow current YouTube API/player policies; do not use the RSounds engine to extract audio, block ads or bypass playback restrictions.
-- LRCLIB integration must implement pacing, 429/Retry-After handling, caching and source attribution.
+- LRCLIB requires a descriptive User-Agent, sequential requests, short request spacing and honoring Retry-After; adapter behavior is isolated in `:provider:lrclib`.
 - Navidrome/Jellyfin are candidates for user-owned libraries through supported protocols, subject to server/content permissions.
 - Music recordings, lyrics, translations and artwork have rights independent of application source code.
 
 ## Initial risk register
-
 | Risk | Severity | Mitigation / gate |
 |---|---|---|
 | Unofficial streaming endpoints change or are not permitted | High | Do not ship InnerTube extraction; use approved adapters |
 | Upstream provenance is incomplete | High | File history, NOTICE and source mapping before reuse |
-| Lyrics match wrong recording/version | High | Multi-signal matching and user correction |
+| Lyrics match wrong recording/version | High | Multi-signal metadata match and user verification |
 | Word timings are absent/inaccurate | Medium | Honest sync-level indicator and line fallback |
-| Provider rate limits or downtime | Medium | Cache, backoff, 429 handling and isolation |
+| Provider rate limits or downtime | Medium | Pacing, Retry-After, cache plan and provider isolation |
 | Large upstream dependency graph | Medium | Selective extraction and dependency allowlist |
 | Android background restrictions | Medium | MediaSessionService and platform tests |
 

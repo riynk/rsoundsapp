@@ -19,16 +19,12 @@ Sequenced by dependency and risk, not visual feature count.
 - [ ] Embedded LRC/TTML/QRC reader and local lyric editor
 
 ## P2 — Deep lyrics
-- [x] Lyrics models distinguish plain, line and word synchronization
-- [x] Plain-text lyrics parser without fabricated timestamps
-- [x] Playback-position-driven line/word timeline
-- [x] Manual timing correction calculation
-- [x] Timeline tests for boundaries, gaps, word highlighting and corrections
-- [x] LRCLIB signature lookup adapter
-- [x] User-Agent identification, request serialization, pacing and Retry-After cooldown
+- [x] Plain, line and word sync levels with honest fallbacks
+- [x] Playback-position-driven line/word timeline and correction math
+- [x] LRCLIB signature lookup with User-Agent identification
+- [x] Request serialization, 300 ms pacing and Retry-After cooldown
 - [x] Word-sync → line-sync → plain-text fallback
-- [x] Tests for matching metadata, no lyrics, instrumentals, 404 and rate limits
-- [ ] Wire LRCLIB provider to an in-app lyric search/Now Playing flow
+- [x] Now Playing lyrics panel driven by Media3 playback position
 - [ ] Persist manual offset correction per track
 - [ ] Translation and romanization provider contracts
 - [ ] Floating lyrics with explicit overlay permission
@@ -42,7 +38,7 @@ Sequenced by dependency and risk, not visual feature count.
 - [ ] Artwork, metadata and playlist import where permitted
 
 ## P4 — Premium experience
-- [ ] Now Playing interface and animated lyrics
+- [ ] Now Playing redesign and animated lyrics
 - [ ] Equalizer/audio effects where supported
 - [ ] Android Auto / Android for Cars
 - [ ] Personalized discovery and smart playlists
