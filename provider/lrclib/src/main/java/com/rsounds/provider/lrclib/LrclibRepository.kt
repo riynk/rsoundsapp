@@ -126,7 +126,7 @@ class LrclibRepository(
                     "artist_name" to record.artistName.orEmpty(),
                     "album_name" to record.albumName.orEmpty()
                 ),
-                source = "lrclib"
+                source = document.source ?: "lrclib"
             ),
             signatureMatch = signatureMatch(query, record)
         )
