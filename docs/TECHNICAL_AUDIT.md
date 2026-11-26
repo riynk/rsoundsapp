@@ -1,20 +1,23 @@
 # RSounds Technical Audit
 
 **Audit date:** 2026-11-26  
-**Scope:** repository state, selected source projects, licensing/provenance and initial platform architecture.  
-**Status:** preliminary code-structure and source-document review; initial CI build verified; not a complete security or device audit.
+**Scope:** repository baseline, selected source projects, licensing/provenance, architecture and initial CI implementation.  
+**Status:** preliminary source-structure review plus passing hosted build/unit tests; not a complete security or device audit.
 
-## RSounds baseline
-At audit start, `RY-DEV` contained documentation and a GPL-3.0-only license, but no Android Gradle project, manifest, Kotlin source or automated build. The initial implementation created the Android project and two core modules.
+## Verified implementation
+- Android Gradle project and Jetpack Compose app shell.
+- Media3 ExoPlayer + MediaSessionService lifecycle boundary.
+- MediaStore local audio scanner with version-aware permission declaration and request flow.
+- MediaController connection, track list, queue submission and play/pause surface.
+- Enhanced-LRC and Lyricsfile parsing, including word-level timestamp preservation.
+- Plain-text lyrics parsing and playback-position-driven lyrics timeline.
+- Unit tests for parser and timeline boundaries.
+- GitHub Actions unit tests, debug APK assembly and artifact publishing.
 
-## CI verification
-- **Verified commit:** `8f47ffabf6eab6e112b55ec1d2616b0615abfc19`
-- **Workflow:** Android CI
-- **Run:** https://github.com/riynk/rsoundsapp/actions/runs/45831770725
-- **Result:** GitHub Actions completed successfully.
-- **Tasks:** `testDebugUnitTest` and `assembleDebug`.
-- This verifies Gradle configuration, compilation, the current lyrics unit tests, and debug APK assembly on the hosted runner.
-- It does not verify runtime playback on a physical device, permissions, audio focus, streaming-provider access, Android Auto, security posture, or production release signing.
+### CI evidence
+- Foundation build: https://github.com/riynk/rsoundsapp/actions/runs/45832235322 — success, including artifact upload.
+- Local playback build: https://github.com/riynk/rsoundsapp/actions/runs/45833231266 — success, including unit tests, debug APK assembly and artifact upload.
+- The CI result verifies hosted compilation and the current unit tests. It does not prove runtime behavior on a physical device.
 
 ## Candidate review
 
@@ -28,7 +31,7 @@ Findings:
 - README describes YouTube Music streaming through public InnerTube streams. RSounds does not adopt this pathway because official authorization and compatibility with current YouTube terms were not established.
 - Provenance states PixelPlayerOSS (GPL-3.0-or-later) and a foundational MIT PixelPlayer commit. This is self-reported upstream evidence and does not replace file-level review.
 - Its dependency review reports 631 unique release runtime coordinates. Importing the whole application would transfer substantial maintenance and license-review scope.
-- Decision: selective technical reference only; preserve notices for any imported component.
+- Decision: selective technical reference only. The Lyricsfile parser is the only file currently adapted from this project and is recorded in `docs/PROVENANCE.md`.
 
 ### Sona — local library and lyrics reference
 Repository: https://github.com/LhacenMed/Sona
@@ -37,7 +40,7 @@ Findings:
 - Strong offline-library foundation: MediaStore library, playlists, playback persistence, embedded LRC/TTML/QRC, word highlighting and lyric offset.
 - README credits Auxio, ArchiveTune, YTDLnis, syncedlyrics, Fossify Music Player and cascade. Ported files carry original notices.
 - It is explicitly an offline player rather than a hybrid streaming product.
-- Decision: reference for local-library and lyrics patterns; no Sona source imported in this implementation.
+- Decision: reference for local-library and lyrics patterns; no Sona source imported.
 
 ### Trident — provenance hold
 Repository: https://github.com/primearijit/Trident
@@ -80,11 +83,11 @@ The adapted Lyricsfile parser is recorded in `docs/PROVENANCE.md`.
 | Android background restrictions | Medium | MediaSessionService and platform tests |
 
 ## Audit limitations
-No full source checkout, dependency-license scan, APK inspection, SAST, secret scan, instrumentation test or physical-device playback test was performed. The successful hosted build does not substitute for those checks.
+No full source checkout, dependency-license scanner/SBOM, APK inspection, SAST, secret scan, Android instrumentation test or physical-device playback test was performed. Current CI is hosted JVM/Android compile and unit-test verification only.
 
 ## Next audit gates
 1. Inspect source histories for every proposed import.
 2. Create a dependency SBOM and automated license report.
-3. Add local MediaStore scanner and playback-controller tests.
-4. Review provider API contracts and terms before implementation.
-5. Run permissions, audio focus, notification and physical-device playback tests.
+3. Add provider contract tests and local persistence.
+4. Run permissions, audio focus, notification and physical-device playback tests.
+5. Review provider API contracts and terms before implementation.

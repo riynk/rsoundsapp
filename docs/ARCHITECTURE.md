@@ -54,11 +54,12 @@ The initial implementation is a modular monolith. Split modules further only whe
 - Advanced queue persistence, shuffle/repeat, audio effects and device tests remain separate integration tasks.
 
 ### Lyrics
-- Domain timestamps are integer milliseconds.
-- Enhanced-LRC parsing supports line and word timestamps, metadata, offsets and repeated line timestamps.
+- Domain timestamps are integer milliseconds. A line with no timestamp uses `startMs = null`, and is never treated as synchronized.
+- `EnhancedLrcParser` supports line and word timestamps, metadata, offsets and repeated line timestamps.
+- `PlainLyricsParser` preserves readable line breaks but does not fabricate timestamps.
+- `LyricsTimeline` resolves the active line/word from the real playback position, respects line/word end boundaries, and applies signed user correction with overflow-safe arithmetic.
 - LRCLIB Lyricsfile YAML uses SnakeYAML's safe constructor, schema-version checks and input/collection limits.
 - Word sync is preferred; line sync is fallback; plain text is last fallback when no timing is supplied.
-- Never fabricate word timing from line timing.
 
 ### Providers
 Each provider must document permitted API/protocol use, authentication, attribution, rate limits, regions, cache rules, content rights and failure behavior.
@@ -98,7 +99,7 @@ Track matching must consider title, primary artist, duration tolerance, album/ve
 - Android Auto / Android for Cars is a later feature and must follow current platform requirements.
 
 ## Testing strategy
-- Unit tests: timestamps, word/line fallback, offsets and invalid YAML.
+- Unit tests: timestamps, word/line/plain fallback, offsets, line/word boundaries, gaps and invalid YAML.
 - Provider contract tests with fixtures; not only live services.
 - Playback tests: queue transitions, audio focus, service recreation and noisy-output events.
 - Instrumentation tests: permissions, MediaStore scanning, notifications and car integration.

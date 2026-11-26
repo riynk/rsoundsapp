@@ -21,12 +21,16 @@ Sequenced by dependency and risk, not visual feature count.
 - [ ] Embedded LRC/TTML/QRC reader and local lyric editor
 
 ## P2 — Deep lyrics
+- [x] Lyrics models distinguish plain, line and word synchronization
+- [x] Plain-text lyrics parser without fabricated timestamps
+- [x] Playback-position-driven line/word timeline
+- [x] Manual timing correction calculation
+- [x] Timeline tests for boundaries, gaps, word highlighting and corrections
 - [ ] LRCLIB provider adapter and polite rate-limit handling
 - [ ] Track-to-lyrics matching with duration/version confidence
-- [ ] Timeline state driven by actual playback position
-- [ ] Word, line and plain-text fallback states
+- [ ] Wire playback position to a live lyrics screen
 - [ ] Translation and romanization provider contracts
-- [ ] Manual offset correction and local persistence
+- [ ] Persist manual offset correction per track
 - [ ] Floating lyrics with explicit overlay permission
 - [ ] Song identification integration and privacy controls
 
