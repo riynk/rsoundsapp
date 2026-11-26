@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-11-26  
 **Scope:** repository baseline, selected source projects, licensing/provenance, architecture and initial CI implementation.  
-**Status:** preliminary source-structure review plus passing hosted build/unit tests; not a complete security or device audit.
+**Status:** source-structure review plus successful hosted build and unit tests; not a complete security or device audit.
 
 ## Verified implementation
 - Android Gradle project and Jetpack Compose app shell.
@@ -20,7 +20,9 @@
 - Foundation build: https://github.com/riynk/rsoundsapp/actions/runs/45832235322 — success.
 - Local playback build: https://github.com/riynk/rsoundsapp/actions/runs/45833231266 — success.
 - Lyrics timeline build: https://github.com/riynk/rsoundsapp/actions/runs/45834020814 — success.
-- Current CI for the LRCLIB provider/UI integration must be checked before describing that commit as verified.
+- Current integrated commit: `9023a41629763dba3a40e6cde6f36d092e83ac1e` — success, including all unit tests, debug APK assembly, test-report upload and APK artifact upload.
+- Latest CI run: https://github.com/riynk/rsoundsapp/actions/runs/45836802458.
+- Test reports contain 16 passing unit tests across three suites: 6 LyricsTimeline, 4 Lyricsfile parser, and 6 LRCLIB provider tests (zero failures, zero skips).
 - Hosted CI verifies compilation and unit tests, not physical-device playback or external network behavior.
 
 ## Candidate review
@@ -86,7 +88,7 @@ The adapted Lyricsfile parser is recorded in `docs/PROVENANCE.md`.
 | Android background restrictions | Medium | MediaSessionService and platform tests |
 
 ## Audit limitations
-No full source checkout, dependency-license scanner/SBOM, APK inspection, SAST, secret scan, Android instrumentation test or physical-device playback test was performed. Current CI is hosted JVM/Android compile and unit-test verification only.
+No full source checkout, dependency-license scanner/SBOM, APK inspection, SAST, secret scan, Android instrumentation test or physical-device playback test was performed. Current CI is hosted JVM/Android compile and unit-test verification only. The latest APK artifact is attached to the CI run above; no emulator or physical-device test was performed.
 
 ## Next audit gates
 1. Inspect source histories for every proposed import.
